@@ -19,6 +19,9 @@ branchdiff_report.txt
 0219D0.bin
 
 # Assets
+*.bin
+*.log
+verification.png
 assets/animationtable_data.bin
 assets/animationtable_entries.bin
 assets/font/*.bin
@@ -48,17 +51,11 @@ assets/music/*.seq
 assets/music/*.aifc
 assets/music/*.aiff
 #obseg
-assets/obseg/bg/*.bin
-assets/obseg/bg/e/*.bin
+assets/obseg/**/*.bin
 assets/obseg/chr/*/Model.c
 assets/obseg/gun/*/Model.c
 assets/obseg/ob__ob_end.seg
 assets/obseg/prop/*/Model.c
-assets/obseg/setup/*.bin
-assets/obseg/setup/[eju]/*.bin
-assets/obseg/stan/*.bin
-assets/obseg/text/*.bin
-assets/obseg/text/[eju]/*.bin
 assets/obseg/text/[eju]/*.c
 assets/ramrom/*.bin
 assets/ramrom/[eju]/*.bin
@@ -112,3 +109,4 @@ assets/obseg/em/data/under.seg
 scripts/local/
 scripts/make/local/
 scripts/__pycache__/generate_prop_model_c.cpython-310.pyc
+*.bin

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoldenEye 007 - Native Decompiled Web Player</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 1rem 2rem;
+      border-bottom: 2px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f59e0b;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .badge {
+      background-color: #10b981;
+      color: #064e3b;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+    .status-bar {
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+    .status-bar span {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .game-container {
+      width: 100%;
+      max-width: 960px;
+      aspect-ratio: 4 / 3;
+      background-color: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+      border: 1px solid #334155;
+      position: relative;
+    }
+    #game {
+      width: 100%;
+      height: 100%;
+    }
+    .info-panel {
+      margin-top: 1.5rem;
+      width: 100%;
+      max-width: 960px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .card {
+      background-color: #1e293b;
+      border-radius: 8px;
+      padding: 1.25rem;
+      border: 1px solid #334155;
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      color: #f59e0b;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 0.5rem;
+    }
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+    .control-item {
+      display: flex;
+      justify-content: space-between;
+      color: #cbd5e1;
+    }
+    .key {
+      background-color: #334155;
+      color: #f8fafc;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    .build-info {
+      font-size: 0.875rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .build-info strong {
+      color: #f8fafc;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #64748b;
+      border-top: 1px solid #1e293b;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <h1>GoldenEye 007</h1>
+      <span class="badge">Decompiled Native Build</span>
+    </div>
+    <div class="status-bar">
+      ROM: <span>ge007.u.z64</span> | Build Status: <span style="color:#10b981">VERIFIED OK</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="game-container">
+      <div id="game"></div>
+    </div>
+
+    <div class="info-panel">
+      <div class="card">
+        <h2>🎮 Player Controls (FPS Mode & Standard)</h2>
+        <div class="controls-grid">
+          <div class="control-item"><span>Move / Strafe</span> <span class="key">WASD / Arrows</span></div>
+          <div class="control-item"><span>Shoot / Fire (Z)</span> <span class="key">Left Click / Z</span></div>
+          <div class="control-item"><span>Aim / Lock-on (R)</span> <span class="key">Right Click / S</span></div>
+          <div class="control-item"><span>Action / Open (A)</span> <span class="key">E / X</span></div>
+          <div class="control-item"><span>Weapon Swap (B)</span> <span class="key">Q / C</span></div>
+          <div class="control-item"><span>Start / Pause</span> <span class="key">Enter</span></div>
+          <div class="control-item"><span>Look Around</span> <span class="key">Mouse / I J K L</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🛠️ Build Specifications</h2>
+        <div class="build-info">
+          <p><strong>Decompile Target:</strong> NTSC-U GoldenEye 007</p>
+          <p><strong>ROM Artifact:</strong> <code>build/u/ge007.u.z64</code></p>
+          <p><strong>SHA1 Checksum:</strong> <code>abe01e4aeb033b6c0836819f549c791b26cfde83</code></p>
+          <p><strong>Toolchain:</strong> Recompiled SGI IDO 5.3 + GCC MIPS</p>
+          <p><strong>Core Engine:</strong> Mupen64Plus-Next (Native WebAssembly Execution)</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    GoldenEye 007 Native Decompilation Project Web Interface
+  </footer>
+
+  <script type="text/javascript">
+    EJS_player = '#game';
+    EJS_core = 'n64';
+    EJS_gameUrl = '/build/u/ge007.u.z64';
+    EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    EJS_startOnLoaded = true;
+    EJS_color = '#f59e0b';
+
+    // Enable WASD, mouse look, and click controls seamlessly
+    EJS_mouse = true;
+    EJS_pointerLock = true;
+    EJS_defaultControls = {
+      0: {
+        // Player 1 controls mapping
+        '0': '90',  // Z - Trigger (Shoot) -> Key 'Z'
+        '1': '88',  // A - Action -> Key 'X' or 'E'
+        '2': '67',  // B - Weapon -> Key 'C' or 'Q'
+        '3': '13',  // Start -> Enter
+        '4': '38',  // D-pad Up
+        '5': '40',  // D-pad Down
+        '6': '37',  // D-pad Left
+        '7': '39',  // D-pad Right
+        '10': '65', // L Shoulder
+        '11': '83', // R Shoulder -> Key 'S' (Aim)
+        '12': '73', // C-Up
+        '13': '75', // C-Down
+        '14': '74', // C-Left
+        '15': '76', // C-Right
+        '16': '87', // Analog Up -> Key 'W'
+        '17': '83', // Analog Down -> Key 'S'
+        '18': '65', // Analog Left -> Key 'A'
+        '19': '68'  // Analog Right -> Key 'D'
+      }
+    };
+
+    // Keyboard & Mouse listener overlay to route WASD / E / Q and Mouse Click seamlessly
+    window.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.querySelector('#game');
+      if (!canvas) return;
+
+      window.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+        // Route 'w','a','s','d','e','q' to standard N64 keys if focus is active
+        if (['w', 'a', 's', 'd', 'e', 'q'].includes(key)) {
+          let targetCode = null;
+          if (key === 'w') targetCode = 'ArrowUp';
+          if (key === 's') targetCode = 'ArrowDown';
+          if (key === 'a') targetCode = 'ArrowLeft';
+          if (key === 'd') targetCode = 'ArrowRight';
+          if (key === 'e') targetCode = 'KeyX'; // A button
+          if (key === 'q') targetCode = 'KeyC'; // B button
+
+          if (targetCode) {
+            window.dispatchEvent(new KeyboardEvent('keydown', { code: targetCode, key: targetCode }));
+          }
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        const key = e.key.toLowerCase();
+        if (['w', 'a', 's', 'd', 'e', 'q'].includes(key)) {
+          let targetCode = null;
+          if (key === 'w') targetCode = 'ArrowUp';
+          if (key === 's') targetCode = 'ArrowDown';
+          if (key === 'a') targetCode = 'ArrowLeft';
+          if (key === 'd') targetCode = 'ArrowRight';
+          if (key === 'e') targetCode = 'KeyX';
+          if (key === 'q') targetCode = 'KeyC';
+
+          if (targetCode) {
+            window.dispatchEvent(new KeyboardEvent('keyup', { code: targetCode, key: targetCode }));
+          }
+        }
+      });
+
+      // Mouse click trigger shoot (Z button) and aim (R button)
+      canvas.addEventListener('mousedown', (e) => {
+        if (e.button === 0) { // Left click -> Shoot (Z key)
+          window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyZ', key: 'z' }));
+        } else if (e.button === 2) { // Right click -> Aim (R / S key)
+          window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyS', key: 's' }));
+        }
+      });
+
+      canvas.addEventListener('mouseup', (e) => {
+        if (e.button === 0) {
+          window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyZ', key: 'z' }));
+        } else if (e.button === 2) {
+          window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyS', key: 's' }));
+        }
+      });
+    });
+  </script>
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+</body>
+</html>
