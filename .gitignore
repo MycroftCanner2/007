@@ -4,6 +4,10 @@ __pycache__/*
 .vscode/
 .[vV][sS]/
 
+node_modules/
+dist/
+.clinic/
+
 *.rz
 *.tmp
 *.o
