@@ -1,20 +1,64 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, FolderOpen, RefreshCw } from 'lucide-react';
+import { Play, FolderOpen, RefreshCw, AlertCircle, FileUp } from 'lucide-react';
 
 export default function GamePlayer({ customRomUrl }) {
   const containerRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
+  const [loadingRom, setLoadingRom] = useState(true);
+  const [romError, setRomError] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('Default (ge007.u.z64)');
 
-  const initEmulator = (romUrl) => {
+  const initEmulator = async (romUrl) => {
+    const targetUrl = romUrl || '/build/u/ge007.u.z64';
+    setLoadingRom(true);
+    setRomError(null);
+
+    // If target URL is not a Blob URL, check if the server ROM actually exists and is binary data
+    if (!targetUrl.startsWith('blob:')) {
+      try {
+        const response = await fetch(targetUrl, { method: 'GET', headers: { Range: 'bytes=0-3' } });
+        if (!response.ok) {
+          setRomError(`ROM artifact not found (${targetUrl}). Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or build the project using 'make'.`);
+          setLoadingRom(false);
+          return;
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('text/html')) {
+          setRomError(`ROM artifact at '${targetUrl}' was not found (server returned HTML page). Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or compile the ROM with 'make'.`);
+          setLoadingRom(false);
+          return;
+        }
+
+        // Check magic bytes for N64 ROM header format
+        const buffer = await response.arrayBuffer();
+        if (buffer.byteLength >= 4) {
+          const view = new DataView(buffer);
+          const magic = view.getUint32(0);
+          const isN64Magic = [0x80371240, 0x37804012, 0x12408037, 0x40123780].includes(magic);
+          if (!isN64Magic) {
+            setRomError(`File at '${targetUrl}' does not appear to be a valid N64 ROM image. Please load a valid GoldenEye 007 ROM file.`);
+            setLoadingRom(false);
+            return;
+          }
+        }
+      } catch (err) {
+        setRomError(`Unable to fetch ROM artifact at '${targetUrl}': ${err.message}. Please load a GoldenEye 007 ROM file (.z64, .n64, .v64).`);
+        setLoadingRom(false);
+        return;
+      }
+    }
+
+    setLoadingRom(false);
     window.EJS_player = '#game';
     window.EJS_core = 'n64';
-    window.EJS_gameUrl = romUrl || '/build/u/ge007.u.z64';
+    window.EJS_gameUrl = targetUrl;
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
     window.EJS_startOnLoaded = true;
     window.EJS_color = '#f59e0b';
     window.EJS_mouse = true;
     window.EJS_pointerLock = true;
+    window.EJS_language = 'en-US';
     window.EJS_defaultControls = {
       0: {
         0: { value: 88 },  // A button -> Key 'X'
@@ -105,10 +149,7 @@ export default function GamePlayer({ customRomUrl }) {
     if (file) {
       const url = URL.createObjectURL(file);
       setSelectedFileName(file.name);
-      window.EJS_gameUrl = url;
-      if (window.EJS_emulator) {
-        window.location.reload();
-      }
+      initEmulator(url);
     }
   };
 
@@ -135,7 +176,24 @@ export default function GamePlayer({ customRomUrl }) {
           </button>
         </div>
       </div>
-      <div id="game"></div>
+      {romError ? (
+        <div className="rom-error-container">
+          <AlertCircle size={48} color="#f59e0b" />
+          <h3>ROM Required to Start Emulation</h3>
+          <p>{romError}</p>
+          <label className="btn btn-primary rom-upload-btn">
+            <FileUp size={16} /> Select & Load N64 ROM File (.z64, .n64)
+            <input
+              type="file"
+              accept=".z64,.n64,.v64"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+          </label>
+        </div>
+      ) : (
+        <div id="game"></div>
+      )}
     </div>
   );
 }
