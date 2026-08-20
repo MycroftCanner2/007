@@ -7,37 +7,44 @@ export default function GamePlayer({ customRomUrl }) {
   const [selectedFileName, setSelectedFileName] = useState('Default (ge007.u.z64)');
 
   const initEmulator = (romUrl) => {
-    if (!window.EJS_player) {
-      window.EJS_player = '#game';
-      window.EJS_core = 'n64';
-      window.EJS_gameUrl = romUrl || '/build/u/ge007.u.z64';
-      window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
-      window.EJS_startOnLoaded = true;
-      window.EJS_color = '#f59e0b';
-      window.EJS_mouse = true;
-      window.EJS_pointerLock = true;
-      window.EJS_defaultControls = {
-        0: {
-          '0': '90',  // Z - Trigger (Shoot) -> Key 'Z'
-          '1': '88',  // A - Action -> Key 'X' or 'E'
-          '2': '67',  // B - Weapon -> Key 'C' or 'Q'
-          '3': '13',  // Start -> Enter
-          '4': '38',  // D-pad Up
-          '5': '40',  // D-pad Down
-          '6': '37',  // D-pad Left
-          '7': '39',  // D-pad Right
-          '10': '65', // L Shoulder
-          '11': '83', // R Shoulder -> Key 'S' (Aim)
-          '12': '73', // C-Up
-          '13': '75', // C-Down
-          '14': '74', // C-Left
-          '15': '76', // C-Right
-          '16': '87', // Analog Up -> Key 'W'
-          '17': '83', // Analog Down -> Key 'S'
-          '18': '65', // Analog Left -> Key 'A'
-          '19': '68'  // Analog Right -> Key 'D'
-        }
-      };
+    window.EJS_player = '#game';
+    window.EJS_core = 'n64';
+    window.EJS_gameUrl = romUrl || '/build/u/ge007.u.z64';
+    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_startOnLoaded = true;
+    window.EJS_color = '#f59e0b';
+    window.EJS_mouse = true;
+    window.EJS_pointerLock = true;
+    window.EJS_defaultControls = {
+      0: {
+        '0': '90',  // Z - Trigger (Shoot) -> Key 'Z'
+        '1': '88',  // A - Action -> Key 'X' or 'E'
+        '2': '67',  // B - Weapon -> Key 'C' or 'Q'
+        '3': '13',  // Start -> Enter
+        '4': '38',  // D-pad Up
+        '5': '40',  // D-pad Down
+        '6': '37',  // D-pad Left
+        '7': '39',  // D-pad Right
+        '10': '65', // L Shoulder
+        '11': '83', // R Shoulder -> Key 'S' (Aim)
+        '12': '73', // C-Up
+        '13': '75', // C-Down
+        '14': '74', // C-Left
+        '15': '76', // C-Right
+        '16': '87', // Analog Up -> Key 'W'
+        '17': '83', // Analog Down -> Key 'S'
+        '18': '65', // Analog Left -> Key 'A'
+        '19': '68'  // Analog Right -> Key 'D'
+      }
+    };
+
+    const loaderId = 'emulatorjs-loader-script';
+    if (!document.getElementById(loaderId)) {
+      const script = document.createElement('script');
+      script.id = loaderId;
+      script.src = 'https://cdn.emulatorjs.org/stable/data/loader.js';
+      script.async = true;
+      document.body.appendChild(script);
     }
 
     setLoaded(true);
