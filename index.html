@@ -200,25 +200,28 @@
     window.EJS_defaultControls = {
       0: {
         // Player 1 controls mapping
-        '0': '90',  // Z - Trigger (Shoot) -> Key 'Z'
-        '1': '88',  // A - Action -> Key 'X' or 'E'
-        '2': '67',  // B - Weapon -> Key 'C' or 'Q'
-        '3': '13',  // Start -> Enter
-        '4': '38',  // D-pad Up
-        '5': '40',  // D-pad Down
-        '6': '37',  // D-pad Left
-        '7': '39',  // D-pad Right
-        '10': '65', // L Shoulder
-        '11': '83', // R Shoulder -> Key 'S' (Aim)
-        '12': '73', // C-Up
-        '13': '75', // C-Down
-        '14': '74', // C-Left
-        '15': '76', // C-Right
-        '16': '87', // Analog Up -> Key 'W'
-        '17': '83', // Analog Down -> Key 'S'
-        '18': '65', // Analog Left -> Key 'A'
-        '19': '68'  // Analog Right -> Key 'D'
-      }
+        0: { value: 88 },  // A button -> Key 'X'
+        1: { value: 67 },  // B button -> Key 'C'
+        3: { value: 13 },  // Start -> Enter
+        4: { value: 38 },  // D-pad Up
+        5: { value: 40 },  // D-pad Down
+        6: { value: 37 },  // D-pad Left
+        7: { value: 39 },  // D-pad Right
+        10: { value: 65 }, // L Shoulder -> Key 'A'
+        11: { value: 83 }, // R Shoulder -> Key 'S'
+        12: { value: 90 }, // Z Trigger -> Key 'Z'
+        16: { value: 68 }, // Analog Stick Right -> Key 'D'
+        17: { value: 65 }, // Analog Stick Left -> Key 'A'
+        18: { value: 83 }, // Analog Stick Down -> Key 'S'
+        19: { value: 87 }, // Analog Stick Up -> Key 'W'
+        20: { value: 76 }, // C-Right -> Key 'L'
+        21: { value: 74 }, // C-Left -> Key 'J'
+        22: { value: 75 }, // C-Down -> Key 'K'
+        23: { value: 73 }  // C-Up -> Key 'I'
+      },
+      1: {},
+      2: {},
+      3: {}
     };
 
     // Keyboard & Mouse listener overlay to route WASD / E / Q and Mouse Click seamlessly
