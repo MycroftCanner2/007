@@ -18,14 +18,14 @@ export default function GamePlayer({ customRomUrl }) {
       try {
         const response = await fetch(targetUrl, { method: 'GET', headers: { Range: 'bytes=0-3' } });
         if (!response.ok) {
-          setRomError(`ROM artifact not found (${targetUrl}). Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or build the project using 'make'.`);
+          setRomError(`ROM artifact at '${targetUrl}' was not found. Copyrighted game assets are not pre-hosted on public servers. Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or compile the ROM locally with 'make'.`);
           setLoadingRom(false);
           return;
         }
 
         const contentType = response.headers.get('content-type') || '';
         if (contentType.includes('text/html')) {
-          setRomError(`ROM artifact at '${targetUrl}' was not found (server returned HTML page). Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or compile the ROM with 'make'.`);
+          setRomError(`ROM artifact at '${targetUrl}' was not found (server returned HTML page). Copyrighted game assets are not pre-hosted on public servers. Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or compile the ROM locally with 'make'.`);
           setLoadingRom(false);
           return;
         }
@@ -179,7 +179,7 @@ export default function GamePlayer({ customRomUrl }) {
       {romError ? (
         <div className="rom-error-container">
           <AlertCircle size={48} color="#f59e0b" />
-          <h3>ROM Required to Start Emulation</h3>
+          <h3>ROM Required to Run Game</h3>
           <p>{romError}</p>
           <label className="btn btn-primary rom-upload-btn">
             <FileUp size={16} /> Select & Load N64 ROM File (.z64, .n64)
@@ -190,6 +190,12 @@ export default function GamePlayer({ customRomUrl }) {
               style={{ display: 'none' }}
             />
           </label>
+          <div className="architecture-note">
+            <h4>Decompilation & Emulation Architecture</h4>
+            <p>
+              This repository contains a C decompilation of GoldenEye 007 that compiles into a 1:1 matching N64 ROM image (<code>ge007.u.z64</code>). The web application plays this compiled N64 ROM via a WebAssembly-based N64 core (Mupen64Plus via EmulatorJS).
+            </p>
+          </div>
         </div>
       ) : (
         <div id="game"></div>

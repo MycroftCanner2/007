@@ -24,7 +24,7 @@ export default function App() {
         setStatusInfo({
           status: 'online',
           platform: 'Cloudflare Pages Functions',
-          game: 'GoldenEye 007 Native Decompile',
+          game: 'GoldenEye 007 C Decompilation (N64 ROM)',
           version: '1.0.0',
           rom: 'ge007.u.z64',
           sha1: 'abe01e4aeb033b6c0836819f549c791b26cfde83',
