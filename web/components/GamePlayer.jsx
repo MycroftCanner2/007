@@ -276,12 +276,12 @@ export default function GamePlayer({ customRomUrl }) {
             />
           </label>
           <div className="architecture-note">
-            <h4>Decompilation & Emulation Architecture</h4>
+            <h4>Decompilation & Web Architecture</h4>
             <p>
-              This repository contains a C decompilation of GoldenEye 007 that compiles into a 1:1 matching N64 ROM image (<code>ge007.u.z64</code>). The web application plays this compiled N64 ROM via WebAssembly (Mupen64Plus via EmulatorJS). Uploaded ROMs are automatically saved in browser storage (IndexedDB) for auto-loading on future visits.
+              This repository contains a C decompilation of GoldenEye 007 that compiles into a 1:1 matching N64 ROM image (<code>ge007.u.z64</code>). The React web interface wraps a WebAssembly runner (Mupen64Plus core) to play the ROM in modern browsers. Uploaded ROMs are cached locally in browser IndexedDB.
             </p>
             <p style={{ marginTop: '8px' }}>
-              <em>Looking for a native port without runtime interpretation?</em> Check out <a href="https://github.com/chrissotraidis/goldenpad" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'underline' }}>GoldenPad</a>, which statically recompiles GoldenEye 007 into native ARM64 code with Metal rendering—no JIT or N64 interpretation at runtime.
+              <em>Looking for a native static recompile without runtime interpretation?</em> Projects like <a href="https://github.com/chrissotraidis/goldenpad" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'underline' }}>GoldenPad</a> statically recompile GoldenEye source code into native machine code (ARM64/Metal or WebAssembly/WebGPU) with zero N64 hardware emulation at runtime.
             </p>
           </div>
         </div>

@@ -18,7 +18,7 @@ export default function BuildInfoCard() {
       <div className="arch-explain">
         <p>
           <Info size={14} color="#38bdf8" style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
-          <strong>Emulation vs Native Recompilation:</strong> This web app runs compiled N64 machine code via WebAssembly (Mupen64Plus core). By contrast, native recompiled projects like <a href="https://github.com/chrissotraidis/goldenpad" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'underline' }}>GoldenPad</a> statically recompile GoldenEye 007 into native Apple ARM64 code with Metal GPU rendering—achieving true native performance with zero runtime JIT or N64 interpretation.
+          <strong>Emulation vs Native Recompilation:</strong> This web app provides a React UI shell around WebAssembly (Mupen64Plus core) to run the compiled N64 machine code. React manages the UI controls and DOM layout, while native C game logic runs inside WebAssembly. True native recompilation (like <a href="https://github.com/chrissotraidis/goldenpad" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'underline' }}>GoldenPad</a> for ARM64/Metal or WebGPU static recompilation) translates C/MIPS source directly into target GPU/CPU code—bypassing N64 emulation entirely.
         </p>
       </div>
     </div>
