@@ -1,5 +1,68 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, FolderOpen, RefreshCw, AlertCircle, FileUp } from 'lucide-react';
+import { Play, FolderOpen, RefreshCw, AlertCircle, FileUp, Trash2 } from 'lucide-react';
+
+const DB_NAME = 'GoldenEyeROMCache';
+const STORE_NAME = 'roms';
+const ROM_KEY = 'cached_ge007_rom';
+
+function openRomDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function getStoredRom() {
+  try {
+    const db = await openRomDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(ROM_KEY);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function saveRomToDB(blob, name) {
+  try {
+    const db = await openRomDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put({ blob, name, date: Date.now() }, ROM_KEY);
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+}
+
+async function clearStoredRomDB() {
+  try {
+    const db = await openRomDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.delete(ROM_KEY);
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+}
 
 export default function GamePlayer({ customRomUrl }) {
   const containerRef = useRef(null);
@@ -7,45 +70,53 @@ export default function GamePlayer({ customRomUrl }) {
   const [loadingRom, setLoadingRom] = useState(true);
   const [romError, setRomError] = useState(null);
   const [selectedFileName, setSelectedFileName] = useState('Default (ge007.u.z64)');
+  const [hasCachedRom, setHasCachedRom] = useState(false);
 
   const initEmulator = async (romUrl) => {
-    const targetUrl = romUrl || '/build/u/ge007.u.z64';
+    let targetUrl = romUrl || '/build/u/ge007.u.z64';
     setLoadingRom(true);
     setRomError(null);
 
+    // Check if local cache has a stored ROM
+    const cachedData = await getStoredRom();
+    if (cachedData) {
+      setHasCachedRom(true);
+    } else {
+      setHasCachedRom(false);
+    }
+
     // If target URL is not a Blob URL, check if the server ROM actually exists and is binary data
     if (!targetUrl.startsWith('blob:')) {
+      let serverRomValid = false;
       try {
         const response = await fetch(targetUrl, { method: 'GET', headers: { Range: 'bytes=0-3' } });
-        if (!response.ok) {
-          setRomError(`ROM artifact at '${targetUrl}' was not found. Copyrighted game assets are not pre-hosted on public servers. Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or compile the ROM locally with 'make'.`);
-          setLoadingRom(false);
-          return;
-        }
-
-        const contentType = response.headers.get('content-type') || '';
-        if (contentType.includes('text/html')) {
-          setRomError(`ROM artifact at '${targetUrl}' was not found (server returned HTML page). Copyrighted game assets are not pre-hosted on public servers. Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or compile the ROM locally with 'make'.`);
-          setLoadingRom(false);
-          return;
-        }
-
-        // Check magic bytes for N64 ROM header format
-        const buffer = await response.arrayBuffer();
-        if (buffer.byteLength >= 4) {
-          const view = new DataView(buffer);
-          const magic = view.getUint32(0);
-          const isN64Magic = [0x80371240, 0x37804012, 0x12408037, 0x40123780].includes(magic);
-          if (!isN64Magic) {
-            setRomError(`File at '${targetUrl}' does not appear to be a valid N64 ROM image. Please load a valid GoldenEye 007 ROM file.`);
-            setLoadingRom(false);
-            return;
+        if (response.ok) {
+          const contentType = response.headers.get('content-type') || '';
+          if (!contentType.includes('text/html')) {
+            const buffer = await response.arrayBuffer();
+            if (buffer.byteLength >= 4) {
+              const view = new DataView(buffer);
+              const magic = view.getUint32(0);
+              if ([0x80371240, 0x37804012, 0x12408037, 0x40123780].includes(magic)) {
+                serverRomValid = true;
+              }
+            }
           }
         }
-      } catch (err) {
-        setRomError(`Unable to fetch ROM artifact at '${targetUrl}': ${err.message}. Please load a GoldenEye 007 ROM file (.z64, .n64, .v64).`);
-        setLoadingRom(false);
-        return;
+      } catch {
+        serverRomValid = false;
+      }
+
+      // If server ROM is missing/invalid, try auto-loading from local IndexedDB cache
+      if (!serverRomValid) {
+        if (cachedData && cachedData.blob) {
+          targetUrl = URL.createObjectURL(cachedData.blob);
+          setSelectedFileName(`${cachedData.name} (Auto-Loaded Local Cache)`);
+        } else {
+          setRomError(`ROM artifact at '/build/u/ge007.u.z64' was not found. Copyrighted game assets are not pre-hosted on public servers. Please load a GoldenEye 007 ROM file (.z64, .n64, .v64) or compile the ROM locally with 'make'.`);
+          setLoadingRom(false);
+          return;
+        }
       }
     }
 
@@ -144,13 +215,22 @@ export default function GamePlayer({ customRomUrl }) {
     };
   }, [customRomUrl]);
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const url = URL.createObjectURL(file);
       setSelectedFileName(file.name);
+      await saveRomToDB(file, file.name);
+      setHasCachedRom(true);
       initEmulator(url);
     }
+  };
+
+  const handleClearCache = async () => {
+    await clearStoredRomDB();
+    setHasCachedRom(false);
+    setSelectedFileName('Default (ge007.u.z64)');
+    window.location.reload();
   };
 
   return (
@@ -171,6 +251,11 @@ export default function GamePlayer({ customRomUrl }) {
               style={{ display: 'none' }}
             />
           </label>
+          {hasCachedRom && (
+            <button className="btn btn-danger" onClick={handleClearCache} title="Clear cached ROM from browser storage">
+              <Trash2 size={14} /> Clear Cache
+            </button>
+          )}
           <button className="btn" onClick={() => window.location.reload()}>
             <RefreshCw size={14} /> Reload
           </button>
@@ -193,7 +278,10 @@ export default function GamePlayer({ customRomUrl }) {
           <div className="architecture-note">
             <h4>Decompilation & Emulation Architecture</h4>
             <p>
-              This repository contains a C decompilation of GoldenEye 007 that compiles into a 1:1 matching N64 ROM image (<code>ge007.u.z64</code>). The web application plays this compiled N64 ROM via a WebAssembly-based N64 core (Mupen64Plus via EmulatorJS).
+              This repository contains a C decompilation of GoldenEye 007 that compiles into a 1:1 matching N64 ROM image (<code>ge007.u.z64</code>). The web application plays this compiled N64 ROM via WebAssembly (Mupen64Plus via EmulatorJS). Uploaded ROMs are automatically saved in browser storage (IndexedDB) for auto-loading on future visits.
+            </p>
+            <p style={{ marginTop: '8px' }}>
+              <em>Looking for a native port without runtime interpretation?</em> Check out <a href="https://github.com/chrissotraidis/goldenpad" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'underline' }}>GoldenPad</a>, which statically recompiles GoldenEye 007 into native ARM64 code with Metal rendering—no JIT or N64 interpretation at runtime.
             </p>
           </div>
         </div>
