@@ -138,6 +138,36 @@ main {
   font-size: 0.95rem;
 }
 
+.architecture-note {
+  margin-top: 1rem;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 1rem;
+  max-width: 600px;
+  text-align: left;
+}
+
+.architecture-note h4 {
+  font-size: 0.9rem;
+  color: #38bdf8;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.architecture-note p {
+  font-size: 0.825rem;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.architecture-note code {
+  background-color: #0f172a;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  color: #f59e0b;
+}
+
 .rom-bar {
   background-color: #1e293b;
   padding: 0.75rem 1rem;
@@ -262,6 +292,15 @@ main {
 
 .info-list strong {
   color: #f8fafc;
+}
+
+.arch-explain {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #334155;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  line-height: 1.5;
 }
 
 footer {

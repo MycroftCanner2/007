@@ -7,7 +7,7 @@ export default function Header({ statusInfo }) {
       <div className="logo-group">
         <Gamepad2 className="text-amber-500" size={28} color="#f59e0b" />
         <h1 className="logo-title">GoldenEye 007</h1>
-        <span className="badge">Decompiled Native Build</span>
+        <span className="badge">C Decompilation (N64 ROM)</span>
       </div>
 
       <div className="status-bar">
